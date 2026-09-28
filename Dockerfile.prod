@@ -1,0 +1,41 @@
+# ==========================================
+# STAGE 1: Build React/Vite Bundle
+# ==========================================
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+# Accept build arguments from Docker Compose / .env
+ARG VITE_API_URL
+ARG VITE_APP_TITLE
+ARG VITE_DEFAULT_LANGUAGE
+ARG VITE_DEFAULT_CURRENCY
+
+# Inject build args into environment for Vite compiler
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_APP_TITLE=$VITE_APP_TITLE
+ENV VITE_DEFAULT_LANGUAGE=$VITE_DEFAULT_LANGUAGE
+ENV VITE_DEFAULT_CURRENCY=$VITE_DEFAULT_CURRENCY
+
+# Install dependencies
+COPY package.json ./
+RUN npm install
+
+# Copy source files & compile static bundle to /app/dist
+COPY . .
+RUN npm run build
+
+# ==========================================
+# STAGE 2: Serve with Production Nginx
+# ==========================================
+FROM nginx:alpine AS production
+
+# Copy compiled static distribution files
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom Nginx SPA routing configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

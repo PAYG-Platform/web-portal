@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  /* LIGHT MODE (Glare-free pearl gray canvas with crisp white cards) */
+  --color-zinc-950: #f0f3f7; /* Soft soothing canvas (NOT pure white!) */
+  --color-zinc-900: #ffffff; /* Elevated cards and surfaces (pops on canvas!) */
+  --color-zinc-850: #f6f8fb; /* Inset panels, table alternate rows, sub-cards */
+  --color-zinc-800: #d9e0ea; /* Inputs, borders, dividing lines (clear boundaries!) */
+  --color-zinc-750: #cbd4e2; /* Active borders and hover states */
+  --color-zinc-700: #b8c3d3; /* Prominent outlines */
+  --color-zinc-600: #8896ab; /* Muted badges */
+  --color-zinc-500: #64748b; /* Secondary labels & metadata */
+  --color-zinc-400: #475569; /* Body secondary text */
+  --color-zinc-300: #334155; /* Body primary text */
+  --color-zinc-200: #1e293b; /* Strong titles */
+  --color-zinc-100: #0f172a; /* High-contrast headings */
+  --color-zinc-50: #020617;  /* Primary black text */
+}
+
+.dark {
+  /* DARK MODE (Comfortable Deep Charcoal / Slate Navy - NOT harsh pitch black!) */
+  --color-zinc-950: #0f141c; /* Eye-comfort deep slate canvas (NO harsh pitch black!) */
+  --color-zinc-900: #171d27; /* Elevated cards & surfaces (distinct from canvas!) */
+  --color-zinc-850: #1f2735; /* Inset panels, table headers, sub-cards */
+  --color-zinc-800: #2b364a; /* Discernible borders, crisp boundaries */
+  --color-zinc-750: #38465f; /* Border focus, active states */
+  --color-zinc-700: #4a5c7c; /* Subtle dividers */
+  --color-zinc-600: #657b9f; /* Muted hints */
+  --color-zinc-500: #859bbd; /* Secondary metadata */
+  --color-zinc-400: #a2b5d2; /* Sub-headings & body labels */
+  --color-zinc-300: #c8d7ec; /* Clear readable text */
+  --color-zinc-200: #e2ebf7; /* Emphasized text */
+  --color-zinc-100: #f1f5fa; /* Crisp titles (softened white, no glare) */
+  --color-zinc-50: #f8fafc;  /* Brightest emphasis */
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+html {
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-zinc-950);
+  color: var(--color-zinc-100);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body.font-fa {
+  font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Clear section elevation in Light Mode */
+html:not(.dark) [class*="bg-zinc-900"] {
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+}
+
+html:not(.dark) [class*="bg-zinc-950/"] {
+  background-color: #f6f8fb;
+}
+
+html:not(.dark) [class*="border-zinc-800"],
+html:not(.dark) [class*="border-zinc-850"] {
+  border-color: #d9e0ea;
+}
+
+/* Clear section elevation & crisp card borders in Dark Mode */
+.dark [class*="bg-zinc-900/30"],
+.dark [class*="bg-zinc-900/40"],
+.dark [class*="bg-zinc-900/50"],
+.dark [class*="bg-zinc-900/60"] {
+  background-color: #171d27;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.15);
+}
+
+.dark [class*="bg-zinc-950/"] {
+  background-color: #111620;
+}
+
+.dark [class*="border-zinc-800"],
+.dark [class*="border-zinc-850"] {
+  border-color: #2b364a;
+}

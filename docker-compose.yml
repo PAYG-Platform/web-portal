@@ -1,0 +1,54 @@
+# --- Connects to the existing shared backend network ---
+networks:
+  vpn_net:
+    external: true
+
+services:
+  # ==========================================
+  # DEVELOPMENT PROFILE
+  # Usage: docker compose --profile development up
+  # ==========================================
+  frontend-dev:
+    profiles: ["development"]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: vpn-frontend-dev
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=${VITE_API_URL:-http://127.0.0.1:8000}
+      - VITE_PROXY_TARGET=http://api-gateway-dev:80
+      - VITE_APP_TITLE=${VITE_APP_TITLE:-PAYG VPN Reseller System}
+      - VITE_DEFAULT_LANGUAGE=${VITE_DEFAULT_LANGUAGE:-en}
+      - VITE_DEFAULT_CURRENCY=${VITE_DEFAULT_CURRENCY:-USD}
+    networks:
+      - vpn_net
+    stdin_open: true
+    tty: true
+
+  # ==========================================
+  # PRODUCTION PROFILE
+  # Usage: docker compose --profile production up
+  # ==========================================
+  frontend-prod:
+    profiles: ["production"]
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://127.0.0.1:8000}
+        VITE_APP_TITLE: ${VITE_APP_TITLE:-PAYG VPN Reseller System}
+        VITE_DEFAULT_LANGUAGE: ${VITE_DEFAULT_LANGUAGE:-en}
+        VITE_DEFAULT_CURRENCY: ${VITE_DEFAULT_CURRENCY:-USD}
+    container_name: vpn-frontend-prod
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:3000:80"

@@ -47,17 +47,17 @@ jobs:
   build-and-push:
     name: "Docker Build & Push to GHCR"
     needs: [lint-and-typecheck]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Converts Organization Name to strictly lowercase for Docker
+      # Converts Organization Name to strictly lowercase for Docker compliance
       - name: Set Lowercase Image Name
         run: |
           RAW_OWNER="${{ github.repository_owner }}"
-          echo "IMAGE_NAME=${RAW_OWNER,,}/vpn-web-portal" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${RAW_OWNER,,}/vpn-web-portal" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -75,7 +75,9 @@ jobs:
           context: .
           file: ./Dockerfile.prod
           load: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             VITE_API_URL=${{ vars.VITE_API_URL || '' }}
             VITE_APP_TITLE=PAYG VPN Portal
@@ -95,17 +97,29 @@ jobs:
 
       - name: Push Image to GHCR
         run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
     name: "Deploy to Production Host"
     needs: [build-and-push]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.FRONTEND_HOST != ''
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
+      - name: Check if Deployment Host is Configured
+        id: check_host
+        env:
+          HOST_VAL: ${{ secrets.FRONTEND_HOST }}
+        run: |
+          if [ -n "$HOST_VAL" ]; then
+            echo "can_deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "can_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ FRONTEND_HOST secret is not configured. Skipping remote deployment."
+          fi
+
       - name: Rolling Deployment via SSH
+        if: steps.check_host.outputs.can_deploy == 'true'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.FRONTEND_HOST }}
@@ -114,16 +128,125 @@ jobs:
           port: ${{ secrets.FRONTEND_PORT || 22 }}
           script: |
             set -e
+
             cd /opt/payg-vpn/web-portal
 
-            echo "📥 Authenticating with registry..."
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+            # Enforce lowercase repository owner for Docker reference compliance
+            REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            REGISTRY="${{ env.REGISTRY }}"
+            IMAGE_BASE="${REGISTRY}/${REPO_OWNER}/vpn-web-portal"
 
-            echo "📦 Pulling new frontend image tag: ${{ github.sha }}..."
+            echo "📥 Authenticating with registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login \
+              "$REGISTRY" \
+              -u "${{ github.actor }}" \
+              --password-stdin
+
+            echo "🔎 Checking current frontend container..."
+            CURRENT_CONTAINER=$(docker compose ps -q frontend-prod 2>/dev/null || true)
+
+            if [ -n "$CURRENT_CONTAINER" ]; then
+              OLD_IMAGE=$(docker inspect "$CURRENT_CONTAINER" --format '{{.Image}}' 2>/dev/null || true)
+            else
+              OLD_IMAGE=""
+            fi
+
+            if [ -n "$OLD_IMAGE" ]; then
+              echo "💾 Previous frontend image ID: $OLD_IMAGE"
+            else
+              echo "ℹ️ No previous frontend image detected."
+            fi
+
+            echo "📦 Preparing deployment image tag..."
+            export IMAGE_NAME="$IMAGE_BASE"
+            export IMAGE_TAG="${{ github.sha }}"
+
+            echo "📦 Pulling frontend image: ${IMAGE_BASE}:${IMAGE_TAG}..."
             docker compose pull frontend-prod
 
-            echo "🚀 Performing rolling restart..."
+            echo "🚀 Starting new frontend container..."
             docker compose up -d --no-deps frontend-prod
+
+            echo "⏳ Waiting for frontend container to initialize..."
+            sleep 4
+
+            NEW_CONTAINER=$(docker compose ps -q frontend-prod 2>/dev/null || true)
+            DEPLOYMENT_FAILED=0
+
+            if [ -z "$NEW_CONTAINER" ]; then
+              echo "❌ CRITICAL: Frontend container was not created!"
+              DEPLOYMENT_FAILED=1
+            else
+              echo "🔎 Running live HTTP health verification..."
+              HEALTHY=0
+
+              # Poll the local web portal port (defaults to 3000 as defined in docker-compose.yml)
+              PORT_TO_CHECK="${PORT:-3000}"
+
+              for i in $(seq 1 10); do
+                HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT_TO_CHECK}" || true)
+                echo "Attempt $i/10: HTTP status $HTTP_STATUS"
+
+                if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "304" ]; then
+                  echo "✅ Frontend HTTP check passed."
+                  HEALTHY=1
+                  break
+                fi
+                sleep 2
+              done
+
+              if [ "$HEALTHY" -ne 1 ]; then
+                echo "❌ CRITICAL: Frontend HTTP check failed (Port $PORT_TO_CHECK did not return HTTP 200)!"
+                docker logs "$NEW_CONTAINER" --tail 30 || true
+                DEPLOYMENT_FAILED=1
+              fi
+            fi
+
+            # -------------------------------------------------------------
+            # AUTOMATIC ROLLBACK SEQUENCE
+            # -------------------------------------------------------------
+            if [ "$DEPLOYMENT_FAILED" -ne 0 ]; then
+              echo "❌ Deployment verification failed! Initiating rollback..."
+
+              if [ -n "$OLD_IMAGE" ]; then
+                echo "💾 Restoring previous frontend image..."
+
+                FAILED_CONTAINER=$(docker compose ps -q frontend-prod 2>/dev/null || true)
+                if [ -n "$FAILED_CONTAINER" ]; then
+                  docker stop "$FAILED_CONTAINER" 2>/dev/null || true
+                  docker rm "$FAILED_CONTAINER" 2>/dev/null || true
+                fi
+
+                ROLLBACK_IMAGE="${IMAGE_BASE}:rollback"
+                echo "🏷️ Tagging previous image: $ROLLBACK_IMAGE..."
+                docker tag "$OLD_IMAGE" "$ROLLBACK_IMAGE"
+
+                export IMAGE_TAG="rollback"
+                docker compose up -d --no-deps frontend-prod
+                sleep 4
+
+                ROLLBACK_CONTAINER=$(docker compose ps -q frontend-prod 2>/dev/null || true)
+                if [ -n "$ROLLBACK_CONTAINER" ]; then
+                  ROLLBACK_RUNNING=$(docker inspect "$ROLLBACK_CONTAINER" --format '{{.State.Running}}' 2>/dev/null || true)
+                  if [ "$ROLLBACK_RUNNING" = "true" ]; then
+                    echo "✅ Rollback completed successfully."
+                  else
+                    echo "❌ CRITICAL: Rollback container failed to start!"
+                    docker logs "$ROLLBACK_CONTAINER" --tail 50 || true
+                    exit 1
+                  fi
+                else
+                  echo "❌ CRITICAL: Rollback container was not created!"
+                  exit 1
+                fi
+              else
+                echo "⚠️ No previous image was available for automatic rollback."
+              fi
+
+              exit 1
+            fi
 
             echo "🧹 Pruning dangling images..."
             docker image prune -af --filter "until=48h"
+
+            echo "✨ Frontend deployment completed successfully."

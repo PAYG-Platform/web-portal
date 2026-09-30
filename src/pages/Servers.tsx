@@ -1202,7 +1202,7 @@ export function Servers() {
                       <input 
                         type="url" 
                         required
-                        placeholder="https://xcp.moshaservice.eu.cc:2053"
+                        placeholder="https://example.com:2053"
                         value={serverForm.api_url}
                         onChange={e => {
                           setServerForm({ ...serverForm, api_url: e.target.value });

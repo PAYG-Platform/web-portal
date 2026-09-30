@@ -11,8 +11,8 @@ interface SignInProps {
 
 export function SignIn({ onNavigateToSignUp, onNavigateToForgot }: SignInProps) {
   const { signIn } = useAuth();
-  const [identifier, setIdentifier] = useState('admin@site.com');
-  const [password, setPassword] = useState('Kz:z"q&3N4YHSt');
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');

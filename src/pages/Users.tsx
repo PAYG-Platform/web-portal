@@ -14,6 +14,8 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '../components/ui/StatCard';
 import { api } from '../services/api';
+import { authService } from '../services/authService';
+import { isCommonWeakPassword } from '../utils/passwords';
 import { QRCodeView } from '../components/common/QRCodeView';
 
 interface UserRecord {
@@ -96,6 +98,120 @@ export function Users() {
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'valid' | 'invalid' | null>(null);
   const [emailMsg, setEmailMsg] = useState('');
+
+  // Debounced Username Uniqueness Check
+  useEffect(() => {
+    if (!isAddUserModalOpen) return;
+    const clean = addUsername.trim();
+    if (!clean) {
+      setUsernameLoading(false);
+      setUsernameStatus(null);
+      setUsernameMsg('');
+      return;
+    }
+
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]?$/;
+    if (clean.length < 3) {
+      setUsernameLoading(false);
+      setUsernameStatus('invalid');
+      setUsernameMsg('Username must be at least 3 characters');
+      return;
+    }
+    if (!usernameRegex.test(clean)) {
+      setUsernameLoading(false);
+      setUsernameStatus('invalid');
+      setUsernameMsg('Must start with a letter and contain letters/numbers/underscores');
+      return;
+    }
+
+    setUsernameStatus(null);
+    setUsernameMsg('');
+
+    const loadingTimer = setTimeout(() => setUsernameLoading(true), 200);
+    const apiTimer = setTimeout(async () => {
+      try {
+        const isAvailable = await authService.checkUsernameAvailability(clean);
+        setUsernameLoading(false);
+        if (isAvailable) {
+          setUsernameStatus('valid');
+          setUsernameMsg('Username is available');
+        } else {
+          setUsernameStatus('invalid');
+          setUsernameMsg('Username is already taken');
+        }
+      } catch {
+        setUsernameLoading(false);
+        setUsernameStatus('invalid');
+        setUsernameMsg('Could not verify username availability');
+      }
+    }, 1500);
+
+    return () => {
+      clearTimeout(loadingTimer);
+      clearTimeout(apiTimer);
+    };
+  }, [addUsername, isAddUserModalOpen]);
+
+  // Debounced Email Uniqueness Check
+  useEffect(() => {
+    if (!isAddUserModalOpen) return;
+    const clean = addEmail.trim();
+    if (!clean) {
+      setEmailLoading(false);
+      setEmailStatus(null);
+      setEmailMsg('');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(clean)) {
+      setEmailLoading(false);
+      setEmailStatus('invalid');
+      setEmailMsg('Invalid email format');
+      return;
+    }
+
+    setEmailStatus(null);
+    setEmailMsg('');
+
+    const loadingTimer = setTimeout(() => setEmailLoading(true), 200);
+    const apiTimer = setTimeout(async () => {
+      try {
+        const isAvailable = await authService.checkEmailAvailability(clean);
+        setEmailLoading(false);
+        if (isAvailable) {
+          setEmailStatus('valid');
+          setEmailMsg('Email is available');
+        } else {
+          setEmailStatus('invalid');
+          setEmailMsg('Email is already registered');
+        }
+      } catch {
+        setEmailLoading(false);
+        setEmailStatus('invalid');
+        setEmailMsg('Could not verify email availability');
+      }
+    }, 1500);
+
+    return () => {
+      clearTimeout(loadingTimer);
+      clearTimeout(apiTimer);
+    };
+  }, [addEmail, isAddUserModalOpen]);
+
+  // Password Complexity Evaluation
+  const getPasswordRequirements = (pwd: string) => ({
+    minLength: pwd.length >= 8,
+    hasUpper: /[A-Z]/.test(pwd),
+    hasLower: /[a-z]/.test(pwd),
+    hasNumber: /[0-9]/.test(pwd),
+    hasSpecial: /[!@#$%^&*(),.?":{}|<>\-_=+\\/]/.test(pwd),
+    notCommon: !isCommonWeakPassword(pwd),
+  });
+
+  const addPasswordReqs = getPasswordRequirements(addPassword);
+  const addPasswordScore = Object.values(addPasswordReqs).filter(Boolean).length;
+  const isAddPasswordStrong = addPasswordScore === 6;
 
   // Gift Adjuster Form State
   const [giftAction, setGiftAction] = useState<'Credit' | 'Debit'>('Credit');
@@ -606,7 +722,7 @@ export function Users() {
 
   const handleCreateClientSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (usernameStatus !== 'valid' || emailStatus !== 'valid' || addPassword.length < 6) return;
+    if (usernameStatus !== 'valid' || emailStatus !== 'valid' || !isAddPasswordStrong) return;
 
     setIsCreatingUser(true);
     try {
@@ -623,6 +739,10 @@ export function Users() {
       setAddUsername('');
       setAddEmail('');
       setAddPassword('');
+      setUsernameStatus(null);
+      setEmailStatus(null);
+      setUsernameMsg('');
+      setEmailMsg('');
       setAddBillingCurrency('IRT');
       setInitialGift('0');
       fetchUsers();
@@ -1859,13 +1979,13 @@ export function Users() {
                 )}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label className="text-[11px] font-medium text-zinc-400 block">Temporary Password</label>
                 <div className="relative">
                   <input 
                     type={showPassword ? "text" : "password"} 
                     required
-                    placeholder="Temporary password"
+                    placeholder="Min. 8 characters with numbers & symbols"
                     value={addPassword}
                     onChange={e => setAddPassword(e.target.value)}
                     className="w-full pl-3 pr-8 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-100 outline-none focus:border-zinc-700 font-mono"
@@ -1878,6 +1998,61 @@ export function Users() {
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
+
+                {/* Password Complexity Progress & Checklist */}
+                {addPassword.length > 0 && (
+                  <div className="space-y-1.5 pt-0.5">
+                    <div className="flex items-center justify-between text-[10px] font-medium">
+                      <span className="text-zinc-500">Complexity</span>
+                      <span className={
+                        addPasswordScore <= 2 ? 'text-rose-400' :
+                        addPasswordScore < 6 ? 'text-amber-400' : 'text-emerald-400'
+                      }>
+                        {addPasswordScore <= 2 ? 'Weak' : addPasswordScore < 6 ? 'Fair' : 'Strong'}
+                      </span>
+                    </div>
+
+                    <div className="h-1 w-full bg-zinc-950 rounded-full overflow-hidden flex gap-1">
+                      {[1, 2, 3, 4, 5, 6].map((step) => (
+                        <div 
+                          key={step} 
+                          className={`h-full flex-1 rounded-full transition-all ${
+                            step <= addPasswordScore 
+                              ? addPasswordScore <= 2 ? 'bg-rose-500' : addPasswordScore < 6 ? 'bg-amber-400' : 'bg-emerald-400' 
+                              : 'bg-zinc-850'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1 text-[10px] text-zinc-500 pt-0.5">
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.minLength ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.minLength ? <Check size={10} /> : <X size={10} />}
+                        <span>Min 8 characters</span>
+                      </div>
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.hasUpper ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.hasUpper ? <Check size={10} /> : <X size={10} />}
+                        <span>Uppercase (A-Z)</span>
+                      </div>
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.hasLower ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.hasLower ? <Check size={10} /> : <X size={10} />}
+                        <span>Lowercase (a-z)</span>
+                      </div>
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.hasNumber ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.hasNumber ? <Check size={10} /> : <X size={10} />}
+                        <span>Number (0-9)</span>
+                      </div>
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.hasSpecial ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.hasSpecial ? <Check size={10} /> : <X size={10} />}
+                        <span>Special symbol (!@#$)</span>
+                      </div>
+                      <div className={`flex items-center gap-1 ${addPasswordReqs.notCommon ? 'text-emerald-400' : ''}`}>
+                        {addPasswordReqs.notCommon ? <Check size={10} /> : <X size={10} />}
+                        <span>Not common</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Account Currency Selection (Option B) */}
@@ -1946,8 +2121,8 @@ export function Users() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isCreatingUser || usernameStatus !== 'valid' || emailStatus !== 'valid' || addPassword.length < 6}
-                  className="flex-1 py-2 bg-zinc-100 hover:bg-white disabled:opacity-30 text-zinc-950 font-semibold rounded-xl text-xs transition-colors cursor-pointer shadow-xs"
+                  disabled={isCreatingUser || usernameStatus !== 'valid' || emailStatus !== 'valid' || !isAddPasswordStrong}
+                  className="flex-1 py-2 bg-zinc-100 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed text-zinc-950 font-semibold rounded-xl text-xs transition-colors cursor-pointer shadow-xs"
                 >
                   {isCreatingUser ? "Creating..." : "Create Client"}
                 </button>
@@ -2230,7 +2405,7 @@ export function Users() {
                 <div className="relative">
                   <input
                     type="number"
-                    min="1"
+                    min="0"
                     max={Math.max(0, selectedUserForDetails.paid_balance)}
                     step="1000"
                     required

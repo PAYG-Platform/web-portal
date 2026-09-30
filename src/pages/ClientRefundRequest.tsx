@@ -212,7 +212,7 @@ export function ClientRefundRequest() {
             <div className="relative">
               <input 
                 type="number"
-                min="1"
+                min="0"
                 step="1000"
                 required
                 placeholder="0"

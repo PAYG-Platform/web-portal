@@ -1,8 +1,9 @@
 // vpn-payg-frontend/src/pages/ForgotPassword.tsx
 import React, { useState } from 'react';
-import { KeyRound, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { KeyRound, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, CheckCircle2, Check, X, XCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../hooks/useAuth';
+import { isCommonWeakPassword } from '../utils/passwords';
 
 interface ForgotPasswordProps {
   onNavigateToSignIn: () => void;
@@ -26,6 +27,21 @@ export function ForgotPassword({ onNavigateToSignIn }: ForgotPasswordProps) {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Password Complexity Evaluation
+  const getPasswordRequirements = (pwd: string) => ({
+    minLength: pwd.length >= 8,
+    hasUpper: /[A-Z]/.test(pwd),
+    hasLower: /[a-z]/.test(pwd),
+    hasNumber: /[0-9]/.test(pwd),
+    hasSpecial: /[!@#$%^&*(),.?":{}|<>\-_=+\\/]/.test(pwd),
+    notCommon: !isCommonWeakPassword(pwd),
+  });
+
+  const passwordReqs = getPasswordRequirements(newPassword);
+  const passwordScore = Object.values(passwordReqs).filter(Boolean).length;
+  const isPasswordStrong = passwordScore === 6;
+  const isPasswordMatching = confirmPassword.length > 0 && newPassword === confirmPassword;
+
   // Handle Reset via Recovery Key
   const handleKeyReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +53,11 @@ export function ForgotPassword({ onNavigateToSignIn }: ForgotPasswordProps) {
       setError('Recovery key must be exactly 12 characters long.');
       return;
     }
-    if (newPassword.length < 6) {
-      setError('New password must be at least 6 characters long.');
+    if (!isPasswordStrong) {
+      setError('New password must meet all complexity requirements.');
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (!isPasswordMatching) {
       setError('Passwords do not match.');
       return;
     }
@@ -166,8 +182,8 @@ export function ForgotPassword({ onNavigateToSignIn }: ForgotPasswordProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div className="space-y-2">
+              <div className="space-y-3.5">
+                <div className="space-y-1.5">
                   <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block">New Password</label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
@@ -175,25 +191,102 @@ export function ForgotPassword({ onNavigateToSignIn }: ForgotPasswordProps) {
                     </span>
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      placeholder="Min. 8 characters with numbers & symbols"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full pl-11 pr-3 py-3 bg-[#09090b] border border-zinc-800 rounded-xl text-sm text-zinc-100 outline-none focus:border-emerald-500 transition-colors"
                       required
                     />
                   </div>
+
+                  {/* Password Complexity Progress & Checklist */}
+                  {newPassword.length > 0 && (
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className="flex items-center justify-between text-[10px] font-medium">
+                        <span className="text-zinc-500">Complexity</span>
+                        <span className={
+                          passwordScore <= 2 ? 'text-rose-400' :
+                          passwordScore < 6 ? 'text-amber-400' : 'text-emerald-400'
+                        }>
+                          {passwordScore <= 2 ? 'Weak' : passwordScore < 6 ? 'Fair' : 'Strong'}
+                        </span>
+                      </div>
+
+                      <div className="h-1 w-full bg-zinc-950 rounded-full overflow-hidden flex gap-1">
+                        {[1, 2, 3, 4, 5, 6].map((step) => (
+                          <div 
+                            key={step} 
+                            className={`h-full flex-1 rounded-full transition-all ${
+                              step <= passwordScore 
+                                ? passwordScore <= 2 ? 'bg-rose-500' : passwordScore < 6 ? 'bg-amber-400' : 'bg-emerald-400' 
+                                : 'bg-zinc-850'
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-1 text-[10px] text-zinc-500 pt-0.5">
+                        <div className={`flex items-center gap-1 ${passwordReqs.minLength ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.minLength ? <Check size={10} /> : <X size={10} />}
+                          <span>Min 8 characters</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordReqs.hasUpper ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.hasUpper ? <Check size={10} /> : <X size={10} />}
+                          <span>Uppercase (A-Z)</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordReqs.hasLower ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.hasLower ? <Check size={10} /> : <X size={10} />}
+                          <span>Lowercase (a-z)</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordReqs.hasNumber ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.hasNumber ? <Check size={10} /> : <X size={10} />}
+                          <span>Number (0-9)</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordReqs.hasSpecial ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.hasSpecial ? <Check size={10} /> : <X size={10} />}
+                          <span>Special symbol (!@#$)</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordReqs.notCommon ? 'text-emerald-400' : ''}`}>
+                          {passwordReqs.notCommon ? <Check size={10} /> : <X size={10} />}
+                          <span>Not common</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block">Confirm Password</label>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-[#09090b] border border-zinc-800 rounded-xl text-sm text-zinc-100 outline-none focus:border-emerald-500 transition-colors"
-                    required
-                  />
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
+                      <Lock size={18} />
+                    </span>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Re-enter password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full pl-11 pr-8 py-3 bg-[#09090b] border border-zinc-800 rounded-xl text-sm text-zinc-100 outline-none focus:border-emerald-500 transition-colors"
+                      required
+                    />
+                    {confirmPassword.length > 0 && (
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center">
+                        {isPasswordMatching ? (
+                          <CheckCircle2 size={16} className="text-emerald-400" />
+                        ) : (
+                          <XCircle size={16} className="text-rose-500" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {confirmPassword.length > 0 && (
+                    <p className={`text-[10px] font-medium flex items-center gap-1 mt-0.5 ${
+                      isPasswordMatching ? 'text-emerald-400' : 'text-rose-400'
+                    }`}>
+                      {isPasswordMatching ? <Check size={10} /> : <X size={10} />}
+                      <span>{isPasswordMatching ? 'Passwords match' : 'Passwords do not match'}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -210,8 +303,8 @@ export function ForgotPassword({ onNavigateToSignIn }: ForgotPasswordProps) {
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-600/50 text-zinc-950 font-extrabold rounded-xl text-sm transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-lg shadow-emerald-950/40 mt-2"
+                disabled={isLoading || !isPasswordStrong || !isPasswordMatching}
+                className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-950 font-extrabold rounded-xl text-sm transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-lg shadow-emerald-950/40 mt-2"
               >
                 {isLoading ? (
                   <span className="w-5 h-5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />

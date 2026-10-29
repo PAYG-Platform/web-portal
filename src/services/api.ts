@@ -144,7 +144,7 @@ function formatFriendlyErrorMessage(rawMessage: string, status?: number): string
 }
 
 /**
- * Core API Request Handler for PAYG VPN Platform.
+ * Core API Request Handler for PAYG MNG Platform.
  * Intercepts requests, handles HttpOnly cookies, FormData, subdomain routing, and formats clean error messages.
  */
 export async function apiRequest<T>(

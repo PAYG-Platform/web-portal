@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: vpn-frontend-dev
+    container_name: mng-frontend-dev
     env_file:
       - .env
     ports:
@@ -25,7 +25,7 @@ services:
       - NODE_ENV=development
       - VITE_API_URL=${VITE_API_URL:-http://127.0.0.1:8000}
       - VITE_PROXY_TARGET=http://api-gateway-dev:80
-      - VITE_APP_TITLE=${VITE_APP_TITLE:-PAYG VPN Reseller System}
+      - VITE_APP_TITLE=${VITE_APP_TITLE:-PAYG MNG Reseller System}
       - VITE_DEFAULT_LANGUAGE=${VITE_DEFAULT_LANGUAGE:-en}
       - VITE_DEFAULT_CURRENCY=${VITE_DEFAULT_CURRENCY:-USD}
     networks:
@@ -44,10 +44,10 @@ services:
       dockerfile: Dockerfile.prod
       args:
         VITE_API_URL: ${VITE_API_URL:-http://127.0.0.1:8000}
-        VITE_APP_TITLE: ${VITE_APP_TITLE:-PAYG VPN Reseller System}
+        VITE_APP_TITLE: ${VITE_APP_TITLE:-PAYG MNG Reseller System}
         VITE_DEFAULT_LANGUAGE: ${VITE_DEFAULT_LANGUAGE:-en}
         VITE_DEFAULT_CURRENCY: ${VITE_DEFAULT_CURRENCY:-USD}
-    container_name: vpn-frontend-prod
+    container_name: mng-frontend-prod
     env_file:
       - .env
     ports:

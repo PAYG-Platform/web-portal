@@ -2755,7 +2755,7 @@ export function Users() {
                     Are you sure you want to activate @{userToToggleStatus.username}?
                   </p>
                   <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    Activating will restore login access and provision active VPN server configurations if they hold credit or gift balance.
+                    Activating will restore login access and provision active Traffic Routing server configurations if they hold credit or gift balance.
                   </p>
                 </>
               )}

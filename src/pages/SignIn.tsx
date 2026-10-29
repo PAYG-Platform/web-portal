@@ -55,7 +55,7 @@ export function SignIn({ onNavigateToSignUp, onNavigateToForgot }: SignInProps) 
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 text-emerald-400 mb-1 shadow-inner">
             <Shield size={32} />
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-zinc-50">PAYG VPN</h1>
+          <h1 className="text-3xl font-black tracking-tight text-zinc-50">PAYG MNG</h1>
           <p className="text-sm text-zinc-400 font-normal max-w-xs mx-auto">
             Pay-As-You-Go Proxy Routing & Management Portal
           </p>

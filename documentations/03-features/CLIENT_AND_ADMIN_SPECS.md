@@ -89,7 +89,7 @@ This document specifies the interactive UI features, real-time polling engines, 
 
 ### 1.9 Account Settings & Telegram Linking
 * **12 Recovery Keys Manager:** View or regenerate emergency account recovery keys behind password verification.
-* **VPN Pause Toggle:** Self-service client toggle to pause/resume VPN credentials on 3X-UI panels.
+* **Traffic Routing Pause Toggle:** Self-service client toggle to pause/resume Traffic Routing credentials on 3X-UI panels.
 * **Telegram Bot Integration:** Single-use deep link generator (`https://t.me/<bot>?start=tk_...`) for receiving instant push alerts.
 
 ---

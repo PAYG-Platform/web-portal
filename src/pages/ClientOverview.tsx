@@ -68,7 +68,7 @@ export function ClientOverview() {
   const [walletBuckets, setWalletBuckets] = useState<WalletBucketItem[]>([]);
   const [loadingBalance, setLoadingBalance] = useState<boolean>(true);
 
-  // 2. VPN Configs & Subscription
+  // 2. Traffic Routing Configs & Subscription
   const [configs, setConfigs] = useState<UserConfigItem[]>([]);
   const [subscriptionUrl, setSubscriptionUrl] = useState<string>('');
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
@@ -676,7 +676,7 @@ export function ClientOverview() {
               <div className="text-center space-y-1 text-zinc-500 text-xs font-mono">
                 <Radio size={22} className="mx-auto text-zinc-700 mb-1" />
                 <p>Waiting for connection...</p>
-                <p className="text-[10px] text-zinc-600">Connect to VPN to detect ISP</p>
+                <p className="text-[10px] text-zinc-600">Connect to Traffic Routing config to detect ISP</p>
               </div>
             )}
           </div>
@@ -820,7 +820,7 @@ export function ClientOverview() {
 
             <div className="space-y-0.5 text-left pr-4">
               <h4 className="text-xs font-bold text-zinc-100 uppercase tracking-wider">{qrModalTitle}</h4>
-              <p className="text-xs text-zinc-400">Scan with your VPN application</p>
+              <p className="text-xs text-zinc-400">Scan with your Traffic Routing application</p>
             </div>
 
             <div className="flex justify-center">

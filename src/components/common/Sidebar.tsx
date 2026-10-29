@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div
             onClick={() => handleNavigation('/')}
             className="flex items-center space-x-2.5 rtl:space-x-reverse cursor-pointer group min-w-0"
-            title="PAYG VPN"
+            title="PAYG MNG"
           >
             <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400 flex items-center justify-center shrink-0">
               <Shield size={16} />
@@ -165,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               "text-sm font-bold tracking-tight text-zinc-100 transition-all truncate",
               isCollapsed && "lg:hidden"
             )}>
-              PAYG VPN
+              PAYG MNG
             </span>
           </div>
 

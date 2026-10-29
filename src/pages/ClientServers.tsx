@@ -329,7 +329,7 @@ export function ClientServers() {
         <div>
           <h2 className="text-xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
             <Server size={20} className="text-emerald-400" />
-            <span>VPN Server Configurations</span>
+            <span>Traffic Routing Server Configurations</span>
           </h2>
           <p className="text-xs text-zinc-400 font-normal mt-0.5">
             Real-time proxy nodes automatically synchronized every 30 seconds.
@@ -368,7 +368,7 @@ export function ClientServers() {
             </h3>
           </div>
           <p className="text-xs text-zinc-400 font-normal">
-            Import this single link to automatically synchronize all active server nodes into your VPN client.
+            Import this single link to automatically synchronize all active server nodes into your Traffic Routing client.
           </p>
         </div>
 
@@ -682,7 +682,7 @@ export function ClientServers() {
             <Sparkles size={20} className="mx-auto text-zinc-600 mb-1" />
             <p className="text-xs font-semibold text-zinc-300">No Active Server Nodes</p>
             <p className="text-xs text-zinc-500">
-              Top up your wallet to activate VPN configurations for your preferred countries.
+              Top up your wallet to activate Traffic Routing configurations for your preferred countries.
             </p>
           </div>
         )}

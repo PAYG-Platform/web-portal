@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/routes/AppRoutes.tsx
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';

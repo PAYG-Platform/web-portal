@@ -70,7 +70,7 @@ const stepsByPlatform = {
     },
     {
       title: 'Import Link into v2rayNG',
-      desc: 'Open the app, tap the ☰ menu in the top left, go to "Subscription Setting", tap the "+" button, name it (e.g., PAYG VPN), and paste your URL.'
+      desc: 'Open the app, tap the ☰ menu in the top left, go to "Subscription Setting", tap the "+" button, name it (e.g., PAYG MNG), and paste your URL.'
     },
     {
       title: 'Update Subscription Nodes',
@@ -96,7 +96,7 @@ const stepsByPlatform = {
     },
     {
       title: 'Start Connection',
-      desc: 'Turn on the main "Connection" toggle at the top of the screen and approve the VPN configuration prompt on your first attempt.'
+      desc: 'Turn on the main "Connection" toggle at the top of the screen and approve the Traffic Routing configuration prompt on your first attempt.'
     }
   ],
   Windows: [
@@ -106,7 +106,7 @@ const stepsByPlatform = {
     },
     {
       title: 'Add Subscription Group',
-      desc: 'Click "Subscription Group" (订阅分组) -> "Configure" -> "Add". Name it "PAYG VPN", paste your Universal Link in the URL field, and click OK.'
+      desc: 'Click "Subscription Group" (订阅分组) -> "Configure" -> "Add". Name it "PAYG MNG", paste your Universal Link in the URL field, and click OK.'
     },
     {
       title: 'Load Server Configurations',
@@ -136,7 +136,7 @@ const stepsByPlatform = {
 export function ClientConnectionGuides() {
   const [activeTab, setActiveTab] = useState<'Android' | 'iOS' | 'Windows' | 'Mac'>('Android');
   const [copiedLink, setCopiedLink] = useState(false);
-  const universalLink = "https://payg-vpn.net/sub/arash_df7g8h467ks8";
+  const universalLink = "https://payg.net/sub/user_df7g8h467ks8";
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(universalLink);

@@ -1,6 +1,6 @@
 {
-  "name": "PAYG VPN Reseller System",
-  "description": "A SaaS dashboard for a Pay-As-You-Go VPN Reseller System featuring Admin, Seller, and Client roles with real-time stats and management.",
+  "name": "PAYG MNG Reseller System",
+  "description": "A SaaS dashboard for a Pay-As-You-Go Traffic Routing Reseller System featuring Admin, Seller, and Client roles with real-time stats and management.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

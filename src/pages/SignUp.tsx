@@ -231,7 +231,7 @@ export function SignUp({ onNavigateToSignIn }: SignUpProps) {
   };
 
   const handleCopyAllKeys = async () => {
-    const textToCopy = `PAYG VPN RECOVERY KEYS FOR @${signupUser?.username}\n=============================\n` + 
+    const textToCopy = `PAYG MNG RECOVERY KEYS FOR @${signupUser?.username}\n=============================\n` + 
       recoveryKeys.map((k, i) => `${i + 1}. ${k}`).join('\n') + 
       `\n=============================\nKeep these keys safe. They are required for account recovery.`;
 
@@ -342,7 +342,7 @@ export function SignUp({ onNavigateToSignIn }: SignUpProps) {
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 text-emerald-400 mb-1 shadow-inner">
               <Shield size={32} />
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-zinc-50">PAYG VPN</h1>
+            <h1 className="text-3xl font-black tracking-tight text-zinc-50">PAYG MNG</h1>
             <p className="text-sm text-zinc-400 font-normal max-w-xs mx-auto">
               Create an account to start routing your traffic securely
             </p>

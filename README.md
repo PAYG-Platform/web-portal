@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="documentations/assets/banner.png" alt="PAYG VPN - Pay For What You Use" width="750" />
+  <img src="documentations/assets/banner.png" alt="PAYG MNG - Pay For What You Use" width="750" />
 </p>
 
-# PAYG VPN — Web Portal & Single-Page Application (SPA)
+# PAYG MNG — Metered Network Gateway & Traffic Routing Platform — Web Portal & Single-Page Application (SPA)
 
 <p align="left">
   <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19" />
@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/License-Proprietary-red?style=flat-square" alt="License" />
 </p>
 
-The **`web-portal`** is the official modern frontend application for the **PAYG VPN Platform**. Built with **React 19**, **Vite 6**, and **Tailwind CSS 4**, it provides high-concurrency client self-service and administrative management interfaces interfacing directly with the platform's distributed microservices via the central API Gateway.
+The **`web-portal`** is the official modern frontend application for the **PAYG MNG Platform**. Built with **React 19**, **Vite 6**, and **Tailwind CSS 4**, it provides high-concurrency client self-service and administrative management interfaces interfacing directly with the platform's distributed microservices via the central API Gateway.
 
 ---
 
@@ -52,7 +52,7 @@ The **`web-portal`** is the official modern frontend application for the **PAYG 
 * **Payment Histories:** Filterable transaction ledger for top-up verification slips, bank refund tracking, and wallet balance movements.
 * **Connection Guides:** Step-by-step installation guides and official download links for Android, iOS, Windows, and macOS.
 * **Support / Tickets:** Helpdesk communication with platform administrators.
-* **Account Settings:** 12 recovery keys manager, self-service VPN traffic toggle, and Telegram Bot notification linking.
+* **Account Settings:** 12 recovery keys manager, self-service Traffic Routing traffic toggle, and Telegram Bot notification linking.
 
 ### 2. Admin Portal (`/admin`)
 * **Overview:** Platform-wide telemetry, paid revenue metrics (isolated from promotional credits), server fleet health, and pending approvals.
@@ -130,7 +130,7 @@ web-portal/
 
 ### 1. Install Dependencies
 ```bash
-git clone https://github.com/payg-vpn-platform/web-portal.git
+git clone https://github.com/payg-platform/web-portal.git
 cd web-portal
 npm install
 ```
@@ -156,7 +156,7 @@ VITE_API_URL=http://127.0.0.1:8000
 VITE_PROXY_TARGET=http://127.0.0.1:8000
 
 # Platform Branding & Locale Defaults
-VITE_APP_TITLE="PAYG VPN Portal"
+VITE_APP_TITLE="PAYG MNG Portal"
 VITE_DEFAULT_LANGUAGE=en
 VITE_DEFAULT_CURRENCY=IRT
 

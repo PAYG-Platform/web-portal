@@ -69,7 +69,7 @@ export function LandingPage() {
           <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 text-emerald-400 flex items-center justify-center shadow-xs">
             <Shield size={18} />
           </div>
-          <span className="text-base font-extrabold tracking-tight text-zinc-100">PAYG VPN</span>
+          <span className="text-base font-extrabold tracking-tight text-zinc-100">PAYG MNG</span>
         </div>
 
         <div className="flex items-center space-x-2.5 sm:space-x-3">
@@ -124,9 +124,9 @@ export function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-50 max-w-3xl mx-auto leading-tight sm:leading-none">
-        PAYG VPN <br />
+        PAYG MNG <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-            Pay For What You Use.
+            Pay For What You Use
           </span>
         </h1>
 
@@ -298,7 +298,7 @@ export function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800/60 mt-12 py-6 text-center text-xs text-zinc-500 max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 font-mono">
-        <p>© {new Date().getFullYear()} PAYG VPN Platform. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} PAYG MNG Platform. All rights reserved.</p>
         <div className="flex items-center space-x-3">
           <button type="button" onClick={() => navigate('/login')} className="hover:text-zinc-300">Log In</button>
           <span>•</span>

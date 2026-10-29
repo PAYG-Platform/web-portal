@@ -1,6 +1,6 @@
 # 🏭 Web Portal Production Deployment & Nginx Guide
 
-This guide specifies the procedures for compiling, containerizing, and serving the **PAYG VPN Web Portal** using production multi-stage Docker builds and Nginx reverse proxying.
+This guide specifies the procedures for compiling, containerizing, and serving the **PAYG MNG Web Portal** using production multi-stage Docker builds and Nginx reverse proxying.
 
 ---
 
@@ -28,7 +28,7 @@ The production frontend is packaged into a hardened, lightweight **Nginx Alpine*
 [ Host Nginx / Cloudflare CDN ]
         │ Reverse Proxy :80
         ▼
-[ Frontend Container (vpn-frontend-prod) : 127.0.0.1:3000:80 ]
+[ Frontend Container (mng-frontend-prod) : 127.0.0.1:3000:80 ]
         │
    Nginx Alpine
    ├── /usr/share/nginx/html (Compiled Static JS/CSS Assets)
@@ -126,7 +126,7 @@ Because Vite bundles environment variables into compiled JavaScript at build tim
 ```env
 # .env (Production)
 VITE_API_URL=https://api.yourdomain.com
-VITE_APP_TITLE="PAYG VPN Portal"
+VITE_APP_TITLE="PAYG MNG Portal"
 VITE_DEFAULT_LANGUAGE=en
 VITE_DEFAULT_CURRENCY=IRT
 ```
@@ -144,7 +144,7 @@ docker compose --profile production build
 docker compose --profile production up -d
 
 # Check running status
-docker ps --filter "name=vpn-frontend-prod"
+docker ps --filter "name=mng-frontend-prod"
 ```
 
 *The frontend container binds to `127.0.0.1:3000:80` on the host, ready for host-level Nginx reverse proxying.*
@@ -208,7 +208,7 @@ The repository includes an automated pipeline in `.github/workflows/ci-cd.yml` e
 ### 2. Container Delivery & CVE Scanning:
 * On push to `main`, Docker Buildx compiles the production multi-stage image.
 * **Trivy Vulnerability Scanner** audits the image for `CRITICAL` and `HIGH` CVEs.
-* The image is tagged and pushed to GitHub Container Registry (`ghcr.io/<owner>/vpn-web-portal:latest`).
+* The image is tagged and pushed to GitHub Container Registry (`ghcr.io/<owner>/mng-web-portal:latest`).
 
 ### 3. Rolling Host Deployment:
 * Deploys to your frontend host over SSH using secret credentials (`FRONTEND_HOST`, `FRONTEND_USER`, `FRONTEND_KEY`).

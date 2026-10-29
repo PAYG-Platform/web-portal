@@ -68,7 +68,7 @@ export function Layout({ children, role, setRole, activeTab, setActiveTab, onSig
   const clientLinks = [
     { name: 'Overview', icon: LayoutDashboard, path: '/client' },
     { name: 'Sellers', icon: Users, path: '/client/sellers' },
-    { name: 'VPN Servers', icon: Server, path: '/client/vpn-servers' },
+    { name: 'Traffic Routing Servers', icon: Server, path: '/client/vpn-servers' },
     { name: 'Top-up Wallet', icon: Wallet, path: '/client/wallet' },
     { name: 'Payment Histories', icon: History, path: '/client/history' },
     { name: 'Connection Guides', icon: Rocket, path: '/client/guides' },
@@ -102,7 +102,7 @@ export function Layout({ children, role, setRole, activeTab, setActiveTab, onSig
             <div className="p-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
               <Shield size={22} />
             </div>
-            <span className="text-lg font-extrabold tracking-tight text-zinc-100">PAYG VPN</span>
+            <span className="text-lg font-extrabold tracking-tight text-zinc-100">PAYG MNG</span>
           </div>
           <button 
             className="lg:hidden p-1 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors"

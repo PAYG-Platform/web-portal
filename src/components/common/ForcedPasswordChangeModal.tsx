@@ -70,7 +70,7 @@ export function ForcedPasswordChangeModal() {
   };
 
   const handleCopyKeys = () => {
-    const textToCopy = `PAYG VPN RECOVERY KEYS FOR @${user.username}\n` +
+    const textToCopy = `PAYG MNG RECOVERY KEYS FOR @${user.username}\n` +
       recoveryKeys.map((k, i) => `${i + 1}. ${k}`).join('\n');
     navigator.clipboard.writeText(textToCopy);
     setKeysCopied(true);

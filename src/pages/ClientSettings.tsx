@@ -146,7 +146,7 @@ export function ClientSettings() {
   };
 
   const handleCopyRevealedKeys = () => {
-    const textToCopy = `PAYG VPN RECOVERY KEYS FOR @${user?.username}\n=============================\n` + 
+    const textToCopy = `PAYG MNG RECOVERY KEYS FOR @${user?.username}\n=============================\n` + 
       revealedKeys.map((k, i) => `${i + 1}. ${k}`).join('\n');
     navigator.clipboard.writeText(textToCopy);
     setKeysCopied(true);
@@ -343,7 +343,7 @@ export function ClientSettings() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
               <span className="text-xs font-semibold text-zinc-300 block uppercase tracking-wider">
-                VPN Routing Status
+                Traffic Routing Routing Status
               </span>
               <div className="flex items-center space-x-2">
                 <span className={cn(
@@ -356,7 +356,7 @@ export function ClientSettings() {
                     "w-1 h-1 rounded-full mr-1.5",
                     !user?.is_self_suspended ? "bg-emerald-500" : "bg-amber-500"
                   )} />
-                  {!user?.is_self_suspended ? 'Active (Routing Enabled)' : 'Paused (VPN Disabled)'}
+                  {!user?.is_self_suspended ? 'Active (Routing Enabled)' : 'Paused (Traffic Routing Disabled)'}
                 </span>
               </div>
             </div>
@@ -380,17 +380,17 @@ export function ClientSettings() {
               ) : (
                 <UserCheck size={14} />
               )}
-              <span>{!user?.is_self_suspended ? 'Pause VPN Traffic' : 'Resume VPN Traffic'}</span>
+              <span>{!user?.is_self_suspended ? 'Pause Traffic Routing' : 'Resume Traffic Routing'}</span>
             </button>
           </div>
 
           {/* Explanation Notice */}
           <div className="p-3 bg-zinc-950/40 border border-zinc-855/60 rounded-xl text-xs text-zinc-400 font-normal leading-relaxed">
-            Pausing your VPN disables connection credentials on all nodes to halt data and battery usage. You remain logged in and can resume anytime. 
+            Pausing your Traffic Routing disables connection credentials on all nodes to halt data and battery usage. You remain logged in and can resume anytime. 
             {cooldownMinutes > 0 ? (
               <> There is a <strong className="text-zinc-200">{cooldownMinutes}-minute cooldown</strong> between status changes.</>
             ) : (
-              <> You can pause and resume your VPN <strong className="text-emerald-400">immediately with zero cooldown</strong>.</>
+              <> You can pause and resume your Traffic Routing Config <strong className="text-emerald-400">immediately with zero cooldown</strong>.</>
             )}
           </div>
 
@@ -566,7 +566,7 @@ export function ClientSettings() {
               <div>
                 <span className="text-xs font-medium text-zinc-200 block">Server Outage & Route Diagnostics</span>
                 <span className="text-[11px] text-zinc-500 block font-normal">
-                  Send alert if an active VPN server node undergoes maintenance.
+                  Send alert if an active Traffic Routing server node undergoes maintenance.
                 </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">

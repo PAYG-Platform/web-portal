@@ -103,7 +103,7 @@ export function UnallocatedNoticeModal() {
         {!isServerReplaced && (
           <div className="space-y-1.5 text-[11px] text-zinc-400">
             <span className="font-semibold text-zinc-200 block">Available Options:</span>
-            <p>• This balance is available in your wallet for all active VPN server locations.</p>
+            <p>• This balance is available in your wallet for all active Traffic Routing server locations.</p>
             <p>• You can also request a bank refund back to your Shetab card at any time.</p>
           </div>
         )}
@@ -118,7 +118,7 @@ export function UnallocatedNoticeModal() {
           />
           <span className="leading-tight">
             {isServerReplaced
-              ? 'I understand I must update the subscription link in my VPN application.'
+              ? 'I understand I must update the subscription link in my Traffic Routing application.'
               : 'I have read and understood this notice completely.'}
           </span>
         </label>

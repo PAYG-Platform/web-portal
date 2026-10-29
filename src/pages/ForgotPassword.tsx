@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/pages/ForgotPassword.tsx
 import React, { useState } from 'react';
 import { KeyRound, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, CheckCircle2, Check, X, XCircle } from 'lucide-react';
 import { motion } from 'motion/react';

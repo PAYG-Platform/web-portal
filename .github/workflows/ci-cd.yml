@@ -39,7 +39,7 @@ jobs:
       - name: Dry-Run Production Build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL || '' }}
-          VITE_APP_TITLE: "PAYG VPN Portal"
+          VITE_APP_TITLE: "PAYG MNG Portal"
           VITE_DEFAULT_LANGUAGE: "en"
           VITE_DEFAULT_CURRENCY: "IRT"
         run: npm run build
@@ -57,7 +57,7 @@ jobs:
       - name: Set Lowercase Image Name
         run: |
           RAW_OWNER="${{ github.repository_owner }}"
-          echo "IMAGE_NAME=${RAW_OWNER,,}/vpn-web-portal" >> "$GITHUB_ENV"
+          echo "IMAGE_NAME=${RAW_OWNER,,}/mng-web-portal" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -80,7 +80,7 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             VITE_API_URL=${{ vars.VITE_API_URL || '' }}
-            VITE_APP_TITLE=PAYG VPN Portal
+            VITE_APP_TITLE=PAYG MNG Portal
             VITE_DEFAULT_LANGUAGE=en
             VITE_DEFAULT_CURRENCY=IRT
           cache-from: type=gha
@@ -129,12 +129,12 @@ jobs:
           script: |
             set -e
 
-            cd /opt/payg-vpn/web-portal
+            cd /opt/payg-mng/web-portal
 
             # Enforce lowercase repository owner for Docker reference compliance
             REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
             REGISTRY="${{ env.REGISTRY }}"
-            IMAGE_BASE="${REGISTRY}/${REPO_OWNER}/vpn-web-portal"
+            IMAGE_BASE="${REGISTRY}/${REPO_OWNER}/mng-web-portal"
 
             echo "📥 Authenticating with registry..."
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login \

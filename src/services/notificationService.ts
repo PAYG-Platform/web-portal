@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/services/notificationService.ts
 import { api } from './api';
 
 export interface NotificationItem {

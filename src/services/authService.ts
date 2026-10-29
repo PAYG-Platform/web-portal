@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/services/authService.ts
 import { api } from './api';
 import { Role } from '../types';
 
@@ -11,7 +10,7 @@ export interface UserProfile {
   language?: string;           // Persisted user language preference (e.g. 'en', 'fa', 'ru')
   billing_currency?: 'IRT' | 'USD'; // Immutable billing currency (Option B)
   is_active: boolean;          // Admin account status (True = Active, False = Admin Locked)
-  is_self_suspended?: boolean; // Client self-service VPN pause status
+  is_self_suspended?: boolean; // Client self-service Traffic Routing pause status
   must_change_password?: boolean;
   status_toggled_at?: string;
   created_at?: string;
@@ -335,7 +334,7 @@ export const authService = {
     ]);
 
     return {
-      brand_name: configRes.brand_name || 'PAYG VPN',
+      brand_name: configRes.brand_name || 'PAYG MNG',
       default_currency: configRes.default_currency || 'IRT',
       default_language: configRes.default_language || 'en',
       default_theme: configRes.default_theme || 'dark',
@@ -365,7 +364,7 @@ export const authService = {
       bank_cards: financeRes.admin_bank_cards || [],
       crypto_wallets: financeRes.admin_crypto_wallets || [],
       admin_payment_instructions: financeRes.admin_payment_instructions || '',
-      bot_username: tgBotRes?.bot_username || 'PAYG_VPN_Bot',
+      bot_username: tgBotRes?.bot_username || 'PAYG_MNG_Bot',
       bot_token: tgBotRes?.bot_token || '',
       notify_seller_settlement: true,
       notify_server_offline: true,

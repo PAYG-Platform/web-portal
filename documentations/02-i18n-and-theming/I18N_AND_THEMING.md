@@ -1,6 +1,6 @@
 # 🌍 Internationalization (i18n) & Dual-Theme Architecture
 
-This document details the multi-language localization engine, RTL layout handling, font typography, and dual-theme color systems implemented in the **PAYG VPN Web Portal**.
+This document details the multi-language localization engine, RTL layout handling, font typography, and dual-theme color systems implemented in the **PAYG MNG Web Portal**.
 
 ---
 

@@ -66,7 +66,7 @@ export function Settings() {
 
   // Settings State
   const [settings, setSettings] = useState<SystemSettings>({
-    brand_name: 'PAYG VPN',
+    brand_name: 'PAYG MNG',
     default_currency: 'IRT',
     default_language: 'en',
     default_theme: 'dark',
@@ -85,7 +85,7 @@ export function Settings() {
     maintenance_message: 'System is undergoing scheduled maintenance.',
     billing_sync_interval: 5,
     xui_request_timeout: 15,
-    bot_username: 'PAYG_VPN_Bot',
+    bot_username: 'PAYG_MNG_Bot',
     bot_token: '',
     notify_seller_settlement: true,
     notify_server_offline: true,
@@ -443,11 +443,11 @@ export function Settings() {
                     </span>
                   </div>
 
-                  {/* Client VPN Status Toggle Cooldown (in Minutes) */}
+                  {/* Client Traffic Routing Status Toggle Cooldown (in Minutes) */}
                   <div className="space-y-1 p-3 bg-zinc-950/60 border border-zinc-850 rounded-xl">
                     <div className="flex items-center justify-between">
                       <label className="text-[11px] font-bold text-zinc-300 block">
-                        Client VPN Toggle Cooldown (Minutes)
+                        Client Traffic Routing Toggle Cooldown (Minutes)
                       </label>
                       <span className="text-[10px] font-mono text-emerald-400">
                         {settings.client_status_cooldown_minutes === 0 ? "0 (Immediate / No Cooldown)" : `${settings.client_status_cooldown_minutes} Min`}
@@ -467,7 +467,7 @@ export function Settings() {
                       placeholder="e.g. 60 (or 0 for immediate)"
                     />
                     <span className="text-[10px] text-zinc-500 block leading-relaxed mt-1">
-                      Duration in minutes a user must wait before toggling their VPN status in Account Settings. Set to <strong>0</strong> to allow clients to deactivate and activate their VPN connections immediately without any cooldown.
+                      Duration in minutes a user must wait before toggling their Traffic Routing status in Account Settings. Set to <strong>0</strong> to allow clients to deactivate and activate their Traffic Routing connections immediately without any cooldown.
                     </span>
                   </div>
 
@@ -620,7 +620,7 @@ export function Settings() {
                       placeholder="e.g. 50 (or 0 to disable)"
                     />
                     <span className="text-[10px] text-zinc-400 block leading-relaxed mt-1">
-                      Disables VPN connections early when client balance drops to <strong>&le; this threshold</strong> (e.g. 50 Toman) to prevent overage debt before delayed 3x-UI sync batches arrive. Remaining balance is preserved in their wallet. Set to <strong>0</strong> to disable.
+                      Disables Traffic Routing connections early when client balance drops to <strong>&le; this threshold</strong> (e.g. 50 Toman) to prevent overage debt before delayed 3x-UI sync batches arrive. Remaining balance is preserved in their wallet. Set to <strong>0</strong> to disable.
                     </span>
                   </div>
 
@@ -1064,7 +1064,7 @@ export function Settings() {
                     <div className="relative">
                       <input 
                         type="text"
-                        placeholder="e.g. PAYG_VPN_Bot (without @)"
+                        placeholder="e.g. PAYG_MNG_Bot (without @)"
                         value={settings.bot_username || ''}
                         onChange={(e) => {
                           const val = e.target.value.trim().replace(/^@/, '');

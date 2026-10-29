@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/pages/auth/Login.tsx
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SignIn } from '../SignIn';

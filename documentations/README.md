@@ -1,6 +1,6 @@
-# 📚 PAYG VPN Web Portal — Documentation Suite
+# 📚 PAYG MNG — Metered Network Gateway & Traffic Routing Platform Web Portal — Documentation Suite
 
-Welcome to the technical documentation suite for the **PAYG VPN Frontend Web Portal**. This directory details the React 19 architecture, routing models, localization systems, UI component catalogs, and production deployment patterns.
+Welcome to the technical documentation suite for the **PAYG MNG Frontend Web Portal**. This directory details the React 19 architecture, routing models, localization systems, UI component catalogs, and production deployment patterns.
 
 ---
 

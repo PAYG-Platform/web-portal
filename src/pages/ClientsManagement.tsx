@@ -350,7 +350,7 @@ export function ClientsManagement() {
             <span>Clients Management</span>
           </h2>
           <p className="text-xs text-zinc-400 font-normal mt-0.5">
-            Monitor client accounts, add or decrease wallet funds in your store (in Toman), and register new VPN users.
+            Monitor client accounts, add or decrease wallet funds in your store (in Toman), and register new Traffic Routing users.
           </p>
         </div>
         

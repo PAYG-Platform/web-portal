@@ -1,6 +1,6 @@
 # 💻 Local Development & Routing Architecture Runbook
 
-This document details how to configure, run, and develop the **PAYG VPN Web Portal** using local Node toolchains or Docker, explaining the Vite proxy integration, React Router hierarchy, and RBAC security guards.
+This document details how to configure, run, and develop the **PAYG MNG Web Portal** using local Node toolchains or Docker, explaining the Vite proxy integration, React Router hierarchy, and RBAC security guards.
 
 ---
 
@@ -64,7 +64,7 @@ docker compose --profile development up --build -d
 ```
 
 * **Live Code Mount:** Changes made on the host in `./src` are reflected immediately inside the running container.
-* **Container Name:** `vpn-frontend-dev`
+* **Container Name:** `mng-frontend-dev`
 * **Internal Network:** Joins the shared `vpn_net` Docker network to reach `api-gateway-dev`.
 
 ---

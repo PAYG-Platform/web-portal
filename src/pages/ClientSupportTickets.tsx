@@ -1,4 +1,3 @@
-// vpn-payg-frontend/src/pages/ClientSupportTickets.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -490,7 +489,7 @@ export function ClientSupportTickets() {
   };
 
   const handleAttachDiagnosticLog = () => {
-    const textLog = `[PAYG VPN CLIENT DIAGNOSTIC LOG]
+    const textLog = `[PAYG MNG CLIENT DIAGNOSTIC LOG]
 Client ID: Active Session
 Timestamp: ${new Date().toISOString()}
 Connected Server Node: ${activeTicket?.relatedServer || 'Primary Gateway'}
@@ -702,7 +701,7 @@ Status: Operational Payload`;
                   type="button"
                   onClick={() => navigate('/client/vpn-servers')}
                   className="p-2 bg-zinc-900 hover:bg-zinc-850 text-zinc-400 hover:text-zinc-200 border border-zinc-800 rounded-xl transition-colors hidden sm:flex cursor-pointer"
-                  title="View VPN Servers List"
+                  title="View Traffic Routing Servers List"
                 >
                   <Server size={15} />
                 </button>
